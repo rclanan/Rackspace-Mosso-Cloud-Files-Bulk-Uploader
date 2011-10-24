@@ -17,7 +17,7 @@
 set_time_limit(0);
 ini_set('register_globals', 'on');
 error_reporting(E_ALL & ~E_NOTICE);
-require_once './php-cloudfiles-1.3.0/cloudfiles.php';
+require_once './php-cloudfiles/cloudfiles.php';
 
 // validate arguments
 $user = $_GET['-u'];
@@ -118,6 +118,15 @@ if (is_dir($path)) {
             } catch (Exception $e) {
                 out('object->load_from_filename $file Exception: '.$e);
             }
+		try {
+			$img_arr = getimagesize($file);
+			$img_height = (int) $img_arr[1];
+			$img_width = (int) $img_arr[0];
+			$object->metadata = array("Width" => $img_width , "Height" => $img_height);
+			$object->sync_metadata();
+		} catch (Exception $e) {
+			out('container->sync_metadata Exception: ' . $e);
+	  	}
             out('Done.');
           }
          
